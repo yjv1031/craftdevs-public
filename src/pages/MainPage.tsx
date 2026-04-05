@@ -1,9 +1,11 @@
 ﻿import { useEffect, useMemo, useRef, useState, type UIEvent } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import styled, { keyframes } from 'styled-components'
 import { MainHeader } from '../components/MainHeader'
 import { ProductDetailModal, type PublicProductDetail } from '../components/ProductDetailModal'
 import { TagPill } from '../components/TagPill'
+import { isLoggedIn as getIsLoggedIn } from '../lib/auth'
 
 type CategoryId = string
 
@@ -100,6 +102,8 @@ async function fetchPublicProductDetail(productId: number): Promise<PublicProduc
 }
 
 function MainPage() {
+  const navigate = useNavigate()
+  const isLoggedIn = getIsLoggedIn()
   const [isMuted, setIsMuted] = useState(true)
   const [activeCategory, setActiveCategory] = useState<CategoryId>('ALL')
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null)
@@ -206,7 +210,11 @@ function MainPage() {
 
   return (
     <Page>
-      <MainHeader cartCount={3} />
+      <MainHeader
+        cartCount={3}
+        isLoggedIn={isLoggedIn}
+        onUserClick={() => navigate(isLoggedIn ? '/user/update' : '/login')}
+      />
 
       <Main>
         <StickyMetaColumn>
@@ -265,7 +273,6 @@ function MainPage() {
         <ShoppingSection>
           <ShoppingHeader>
             <h2>상품목록</h2>
-            <MoreButton href="#">전체보기 ›</MoreButton>
           </ShoppingHeader>
 
           <CategoryTabs>
@@ -599,7 +606,7 @@ const ShoppingSection = styled.section`
 const ShoppingHeader = styled.div`
   padding: 22px 20px 8px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
 
   h2 {
@@ -607,11 +614,6 @@ const ShoppingHeader = styled.div`
     font-size: 28px;
     letter-spacing: -0.4px;
   }
-`
-
-const MoreButton = styled.a`
-  font-size: 14px;
-  color: var(--ink-sub);
 `
 
 const CategoryTabs = styled.div`
@@ -752,6 +754,7 @@ const Price = styled.strong`
 `
 
 export default MainPage
+
 
 
 

@@ -1,10 +1,16 @@
-import styled from 'styled-components'
+﻿import styled from 'styled-components'
 
 type MainHeaderProps = {
   cartCount?: number
+  isLoggedIn?: boolean
+  onUserClick?: () => void
 }
 
-export function MainHeader({ cartCount = 0 }: MainHeaderProps) {
+export function MainHeader({
+  cartCount = 0,
+  isLoggedIn = false,
+  onUserClick,
+}: MainHeaderProps) {
   return (
     <HeaderRoot>
       <BrandGroup>
@@ -33,7 +39,22 @@ export function MainHeader({ cartCount = 0 }: MainHeaderProps) {
           🛒
           {cartCount > 0 && <CountBadge>{cartCount}</CountBadge>}
         </IconButton>
-        <IconButton aria-label="내 정보">👤</IconButton>
+        <IconButton aria-label="내 정보" $isLoggedIn={isLoggedIn} onClick={onUserClick}>
+          <UserGlyph
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="8" r="3.2" stroke="currentColor" strokeWidth="1.8" />
+            <path
+              d="M5.5 18.3C6.7 15.6 9 14.2 12 14.2C15 14.2 17.3 15.6 18.5 18.3"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+            />
+          </UserGlyph>
+        </IconButton>
       </ActionGroup>
     </HeaderRoot>
   )
@@ -102,14 +123,22 @@ const ActionGroup = styled.div`
   gap: 8px;
 `
 
-const IconButton = styled.button`
+const IconButton = styled.button<{ $isLoggedIn?: boolean }>`
   position: relative;
   width: 38px;
   height: 38px;
   border: 1px solid var(--line);
   border-radius: 10px;
   background: #fff;
+  color: ${(p) => (p.$isLoggedIn ? '#22c55e' : '#ef4444')};
   cursor: pointer;
+`
+
+const UserGlyph = styled.svg`
+  width: 20px;
+  height: 20px;
+  display: block;
+  margin: 0 auto;
 `
 
 const CountBadge = styled.span`
